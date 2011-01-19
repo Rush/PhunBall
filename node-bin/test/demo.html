@@ -1,4 +1,5 @@
-<script src="http://cdn.socket.io/stable/socket.io.js"></script>
+<!--<script src="http://cdn.socket.io/stable/socket.io.js"></script>-->
+<script src="/socket.io.js"></script>
 <script>
 var context;
 
@@ -23,7 +24,8 @@ function draw()
 	}
 }
 
-var socket = new io.Socket("localhost", {port: 8081, rememberTransport: false});
+var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
+//	transports: [ 'websocket', 'flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling' ]});
 socket.connect();
 socket.on('message', function(obj){
 	balls = obj.balls;

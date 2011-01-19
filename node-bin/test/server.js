@@ -20,10 +20,11 @@ server = http.createServer(function(req, res){
       break;
       
     case '/json.js':
+    case '/socket.io.js':
     case '/demo.html':
       fs.readFile(__dirname + path, function(err, data){
         if (err) return send404(res);
-        res.writeHead(200, {'Content-Type': path == 'json.js' ? 'text/javascript' : 'text/html'})
+        res.writeHead(200, {'Content-Type': path.substring(path.length-3,path.length) == '.js' ? 'text/javascript' : 'text/html'})
         res.write(data, 'utf8');
         res.end();
       });
@@ -77,7 +78,7 @@ var tick = 0;
 			sendBalls.push({x : balls[i].x|0, y : balls[i].y|0, r: balls[i].r|0});
 		}
 		client.send({balls: sendBalls} );
-		console.log("sending update to " + client.sessionId + " ---> tick " + tick);
+
 		client.updateInterval = setTimeout(updateStuff, 20);
 	}
 	client.updateInterval = setTimeout(updateStuff, 20);
