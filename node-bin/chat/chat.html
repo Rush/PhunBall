@@ -35,7 +35,7 @@
         if ('buffer' in obj){
           document.getElementById('form').style.display='block';
           document.getElementById('chat').innerHTML = '';
-          
+
           for (var i in obj.buffer) message(obj.buffer[i]);
         } else message(obj);
       });
