@@ -33,7 +33,7 @@ server = http.createServer(function(req, res){
 		res.write('<h1>Welcome. Try the <a href="/demo.html">demo</a> example.</h1>');
 		res.end();
 		break;*/
-			sendFile('/game.html', res);
+			sendFile('/client/game.html', res);
 		break;
 		case '/jquery.js':
 		case '/json.js':
