@@ -7,10 +7,6 @@ function onConnected() {
 	logMsg("Connected to server");
 }
 
-function onDisconnected() {
-	logMsg("Disconnected from server");
-}
-
 function onPlayerConnected(id, x, y)  {
 	logMsg("Player " + id + " joined at x=" + x + " y=" + y);	
 }
@@ -20,16 +16,9 @@ function onPlayerConnected(id, x, y)  {
  */
 function onPlayersState(playersState)
 {
-	var pState = playersState;
-	var text = "All players: ";
-	for(i = 0;i < pState.length;++i) {
-		text += pState[i].id + "("+ pState[i].state.x + "," + 
-			pState[i].state.y
-			+ ") "
-			}
-	logMsg(text);
+
 }
 
 function onPlayerDisconnected(id) {
-	logMsg("Player " + id + " disconnected");
+
 }

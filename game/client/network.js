@@ -5,6 +5,9 @@ var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
 socket.on('connect', function() {
 		onConnected();
 	});
+socket.on('disconnect', function() {
+		onDisconnected();
+	});
 socket.connect();
 socket.on('message', function(message){
 		if(message.playerConnected) {
