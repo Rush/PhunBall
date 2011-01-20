@@ -1,17 +1,27 @@
-<!DOCTYPE HTML>
-<html>
+﻿<!DOCTYPE html>
+<html xmlns="">
 <head>
-<title>PhunBall</title>
-<script src="json.js"></script>
-<script src="jquery.js"></script>
-<script src="socket.io.js"></script>
-<script src="network.js"></script>
-<script src="events.js"></script>
+	<title>PhunBall</title>
+	<link href="http://tbc.lisek.com/Scripts/PhunBall/Site.css" rel="stylesheet" type="text/css" />
+	<script src="http://tbc.lisek.com/Scripts/PhunBall/jquery.js" type="text/javascript"></script>
+	<script src="json.js" type="text/javascript"></script>
+	<script src="socket.io.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/Acx/Common.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/Acx/Array.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/Acx/Key.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/PhunBall/Vector.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/PhunBall/Ball.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/PhunBall/Player.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/PhunBall/Field.js" type="text/javascript"></script>
+	<script src="http://tbc.lisek.com/Scripts/PhunBall/Game.js" type="text/javascript"></script>
 </head>
 <body>
-Console:
-<pre id="console">
-	
-</pre>
+	<canvas id="field" width="840" height="408">
+	</canvas>
+	<br />
+	<div>
+		Console:
+		<pre id="console"></pre>
+	</div>
 </body>
 </html>
