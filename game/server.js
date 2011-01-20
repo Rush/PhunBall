@@ -115,6 +115,7 @@ setInterval(worldUpdate, 1);
 
 io.on('connection', function(client){
 
+		client.ip = client.request.socket.remoteAddress;
 
 		var myPlayersState = [];
 		for(i = 0;i < playerList.length;++i) {
