@@ -44,7 +44,20 @@ server = http.createServer(function(req, res){
 		case '/events.js':
 		case '/game.html':
 			sendFile("/client" + path, res);
-			break;			
+			break;		
+		case '/log':
+			res.writeHead(200, {'Content-Type': 'text/html'});
+			fs.readFile(__dirname + "/node.log",
+						function(err, data) {
+							if (err)
+								return send404(res);
+							res.writeHead(200, {'Content-Type': 'text/html'});
+							res.write("<html><head><title>Output log</title></head><body><pre>");
+							res.write(data, 'utf8');
+							res.write("</pre></body></html>");
+							res.end();
+						})	
+				break;
 		default:
 			send404(res);
 		}
