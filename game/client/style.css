@@ -1,0 +1,21 @@
+/*#field {
+	background: url(http://tbc.lisek.com/Scripts/PhunBall/boisko.png);
+	width: 840px;
+	height: 408px;
+	position: relative;
+}
+
+#ball {
+	background: url(http://tbc.lisek.com/Scripts/PhunBall/pilka.png);
+	width: 24px;
+	height: 24px;
+	position: absolute;
+}
+
+.player {
+	background: url(http://tbc.lisek.com/Scripts/PhunBall/gracz.png);
+	width: 32px;
+	height: 32px;
+	position: absolute;
+}
+*/
