@@ -40,9 +40,10 @@ server = http.createServer(function(req, res){
 		case '/socket.io.js':
 			sendFile("/lib/" + path, res);
 		break;
-		case '/game.js':
+		case '/network.js':
+		case '/events.js':
 		case '/game.html':
-			sendFile(path, res);
+			sendFile("/client" + path, res);
 			break;			
 		default:
 			send404(res);

@@ -1,12 +1,9 @@
 var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
 /*	transports: [ 'websocket', 'flashsocket', 'htmlfile', 'xhr-multipart',
 	'xhr-polling' ]}); */
-function logMsg(text) {
-	$('#console').append("<span>" + text + "</span>\n");
-}
 
 socket.on('connect', function() {
-		logMsg("Connected to server");
+		onConnected();
 	});
 socket.connect();
 socket.on('message', function(message){
@@ -15,17 +12,10 @@ socket.on('message', function(message){
 			
 		}
 		else if(message.playersState) {
-			var pState = message.playersState;
-			var text = "All players: ";
-			for(i = 0;i < pState.length;++i) {
-				text += pState[i].id + "("+ pState[i].state.x + "," + 
-					pState[i].state.y
-					+ ") "
-					}
-			logMsg(text);
+			onPlayersState(message.playersState);
 		}
 		else if(message.playerDisconnected) {
-			logMsg("Player " + message.playerDisconnected.id + " disconnected");
+			onPlayerDisconnected(message.playerDisconnected.id);
 		}
 	});
 
