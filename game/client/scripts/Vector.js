@@ -57,3 +57,5 @@ function Vector(x, y)
 		return this.x + " : " + this.y;
 	}
 }
+
+module.exports = Vector;

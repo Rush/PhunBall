@@ -5,6 +5,9 @@ var http = require('http')
   , sys = require(process.binding('natives').util ? 'util' : 'sys')
   , server;
 
+require.paths.unshift("./client/scripts/");
+var Vector = require('Vector');
+
 
 send404 = function (res)
 {
