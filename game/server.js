@@ -20,8 +20,7 @@ function sendFile(path, res)
 				{
 					if (err)
 						return send404(res);
-					res.writeHead(200, { 'Content-Type': path.substring(path.length - 3, path.length) == '.js' ? 'text/javascript' : 'text/html' });
-					res.write(data, 'utf8');
+					res.writeHead(200, { 'Content-Type': path.substring(path.length - 3, path.length) == '.js' ? 'text/javascript' : 'text/html' });					res.write(data, 'utf8');
 					res.end();
 				});
 }
@@ -34,21 +33,7 @@ server = http.createServer(function (req, res)
 	{
 		case '':
 		case '/':
-			/*      res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write('<h1>Welcome. Try the <a href="/demo.html">demo</a> example.</h1>');
-			res.end();
-			break;*/
-			sendFile('/client/game.html', res);
-			break;
-		case '/jquery.js':
-		case '/json.js':
-		case '/socket.io.js':
-			sendFile("/lib/" + path, res);
-			break;
-		case '/network.js':
-		case '/events.js':
-		case '/game.html':
-			sendFile("/client" + path, res);
+			sendFile('/client/index.html', res);
 			break;
 		case '/log':
 			res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -65,8 +50,7 @@ server = http.createServer(function (req, res)
 						})
 			break;
 		default:
-			sendFile(path, res);
-			//send404(res);
+			sendFile('/client/' + path, res);
 	}
 });
 

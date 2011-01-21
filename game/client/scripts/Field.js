@@ -29,17 +29,33 @@ function Field(width, height)
 		this.players.add(new Player(id, "name", new Vector(x, y)));
 	};
 
-	this.removePlayer = function (id)
-	{
+	this.id2index = function id2index(id) {
 		for (var i = 0; i < this.players.length; i++)
 		{
 			if (this.players[i].id == id)
 			{
-				this.players.removeAt(i);
+				return i;
 				break;
 			}
 		}
+		return -1;
+	}
+
+
+	this.removePlayer = function (id)
+	{
+		this.players.removeAt(this.id2index(id));
 	};
+
+
+	this.setPlayerPosition = function (id, pos)
+	{
+		var player = this.players[this.id2index(id)];
+		pos.x = Math.clamp(0, width, pos.x);
+		pos.y = Math.clamp(0, height, pos.y);
+		player.position = pos;
+	};
+
 
 	this.movePlayer = function (v)
 	{

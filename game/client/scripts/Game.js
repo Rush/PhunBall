@@ -110,6 +110,12 @@ $(function ()
 			onPlayersState(message.playersState);
 		else if (message.playerDisconnected)
 			onPlayerDisconnected(message.playerDisconnected.id);
+		else if (message.stateUpdate) {
+
+			field.setPlayerPosition(message.id, new Vector(message.stateUpdate.x,
+														   message.stateUpdate.y));
+			
+		}
 	});
 
 	socket.connect();
@@ -138,4 +144,11 @@ $(function ()
 		field.update(time);
 		field.draw(context);
 	}, 10);
+
+	setInterval(function ()
+	{
+		var time = (new Date()).valueOf();
+		socket.send({stateUpdate: {x: field.player.position.x, y:field.player.position.y, time: time}});
+	}, 100);
+
 });
