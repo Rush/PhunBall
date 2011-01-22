@@ -56,6 +56,12 @@ function Field(width, height)
 		player.position = pos;
 	};
 
+	this.setSelfPosition = function (pos) {
+		pos.x = Math.clamp(0, width, pos.x);
+		pos.y = Math.clamp(0, height, pos.y);
+		this.player.position = pos;
+	}
+
 
 	this.movePlayer = function (v)
 	{

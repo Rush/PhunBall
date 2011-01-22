@@ -12,8 +12,9 @@ $(function ()
 	var field = new Field(width, height);
 	var lastTime = new Date();
 	var playerConnected = false;
+	var cursVec = new Vector();
 	var moveVec = new Vector();
-	var playerSpeed = 200;
+	var selfId = 0;
 
 	var left, up, rigth, down;
 
@@ -33,6 +34,14 @@ $(function ()
 				right = value;
 			else if (event.keyCode == Key.Down)
 				down = value;
+
+			var newCursVec = getCursorVector();
+			
+			if(cursVec.toString() != newCursVec.toString()) {
+				socket.send({stateUpdate: newCursVec});
+				
+			}
+			cursVec = newCursVec;
 
 			return false;
 		}
@@ -104,32 +113,44 @@ $(function ()
 
 	socket.on('message', function (message)
 	{
-		if (message.playerConnected)
+		if(message.hello) {
+			selfId = message.hello;
+		}
+		else if (message.playerConnected)
 			onPlayerConnected(message.playerConnected.id, message.playerConnected.state.x, message.playerConnected.state.y);
 		else if (message.playersState)
 			onPlayersState(message.playersState);
 		else if (message.playerDisconnected)
 			onPlayerDisconnected(message.playerDisconnected.id);
-		else if (message.stateUpdate) {
+		else if (message.playersStateUpdate) {
 
-			field.setPlayerPosition(message.id, new Vector(message.stateUpdate.x,
-														   message.stateUpdate.y));
+			var states = message.playersStateUpdate;
+			for(i = 0;i < states.length;++i) {
+				var id = states[i].id;
+				var state = states[i].state;
+				if(id == selfId) {
+					field.setSelfPosition(new Vector(state.x, state.y));
+				}
+				else
+					field.setPlayerPosition(id, new Vector(state.x,
+														   state.y));
+			}
 			
 		}
+		
 	});
 
 	socket.connect();
 
 	// main loop
 
-	function getMovementVector(time)
+	function getCursorVector()
 	{
 		var move = new Vector();
 
 		move.x = right ^ left ? (right ? 1 : -1) : 0;
 		move.y = down ^ up ? (down ? 1 : -1) : 0;
-
-		return move.normalize().mul(playerSpeed * time);
+		return move;
 	}
 
 	setInterval(function ()
@@ -138,17 +159,17 @@ $(function ()
 		var time = (now.valueOf() - lastTime.valueOf()) / 1000;
 		lastTime = now;
 
-		var movement = getMovementVector(time);
+//		var movement = getMovementVector(time);
 
-		field.movePlayer(movement);
+//		field.movePlayer(movement);
 		field.update(time);
 		field.draw(context);
 	}, 10);
 
-	setInterval(function ()
+/*	setInterval(function ()
 	{
 		var time = (new Date()).valueOf();
 		socket.send({stateUpdate: {x: field.player.position.x, y:field.player.position.y, time: time}});
-	}, 100);
+		}, 100);*/
 
 });
