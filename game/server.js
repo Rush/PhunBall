@@ -201,15 +201,20 @@ io.on('connection', function (client)
 
 	client.on('message', function (message)
 	{
-		if (message.stateUpdate)
-		{
-			message.id = client.sessionId;
-//			client.broadcast(message);
-			var playerState = playersState[message.id];
-			playerState.cursorVector = 
-				new Vector(message.stateUpdate.x, message.stateUpdate.y);
-//			console.log(message.stateUpdate);
+		try {
 
+			if (message.stateUpdate)
+			{
+				message.id = client.sessionId;
+//			client.broadcast(message);
+				var playerState = playersState[message.id];
+				playerState.cursorVector = 
+					new Vector(message.stateUpdate.x, message.stateUpdate.y);
+//			console.log(message.stateUpdate);
+				
+			}
+		} catch(err) {
+			console.log("Exception: '" + err.description + "' on client message.");
 		}
 	});
 
