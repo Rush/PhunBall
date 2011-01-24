@@ -1,68 +1,35 @@
-var http = require('http')
-  , url = require('url')
-  , fs = require('fs')
-  , io = require('../node-bin')
-  , sys = require(process.binding('natives').util ? 'util' : 'sys')
-  , server;
+/*var http = require('http')
+, url = require('url')
+, fs = require('fs')
+, io = require('../node-bin')
+, sys = require(process.binding('natives').util ? 'util' : 'sys')
+, server;*/
 
 require.paths.unshift("./client/scripts/");
+require.paths.unshift("./server/")
 var Vector = require('Vector');
+var Server = require('Server');
 
-
-send404 = function (res)
-{
-	res.writeHead(404);
-	res.write('404');
-	res.end();
-};
-
-function sendFile(path, res)
-{
-	fs.readFile(__dirname + path,
-				function (err, data)
-				{
-					if (err)
-						return send404(res);
-					res.writeHead(200, { 'Content-Type': path.substring(path.length - 3, path.length) == '.js' ? 'text/javascript' : 'text/html' });					res.write(data, 'utf8');
-					res.end();
-				});
-}
-
-server = http.createServer(function (req, res)
-{
-	// your normal server code
-	var path = url.parse(req.url).pathname;
-	switch (path)
-	{
-		case '':
-		case '/':
-			sendFile('/client/index.html', res);
-			break;
-		case '/log':
-			res.writeHead(200, { 'Content-Type': 'text/html' });
-			fs.readFile(__dirname + "/node.log",
-						function (err, data)
-						{
-							if (err)
-								return send404(res);
-							res.writeHead(200, { 'Content-Type': 'text/html' });
-							res.write("<html><head><title>Output log</title></head><body><pre>");
-							res.write(data, 'utf8');
-							res.write("</pre></body></html>");
-							res.end();
-						})
-			break;
-		default:
-			sendFile('/client/' + path, res);
-	}
-});
-
-
-
+var server = new Server;
 server.listen(8081);
+server.basePath = __dirname;
 
-var io = io.listen(server);
-var tick = 0;
+server.on('connection',
+		  function(client) {
+			  
+			  console.log(client.sessionId + " Connected");
+			  client.on('disconnect', 
+						function() {
+							console.log(client.sessionId + " Disconnected");
+						}
+
+					   );
+		  }		  
+		 );
+
+
+
+/*var tick = 0;
 
 var ballState = { position: { x: 250, y: 300} };
 var playersState = [];
@@ -160,11 +127,13 @@ setInterval(function() {
 		}		
 		io.broadcast({ playersStateUpdate: myPlayersState });
 	}, 50);
+*/
 
 
-
-io.on('connection', function (client)
+/*io.on('connection', function (client)
 {
+	if(client.connection)
+		client.connection.setNoDelay(true);
 
 	client.ip = client.connection.remoteAddress;
 
@@ -233,4 +202,4 @@ io.on('connection', function (client)
 			}
 		}
 	});
-});
+});*/
