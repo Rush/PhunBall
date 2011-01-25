@@ -82,7 +82,7 @@ function Server(port)
 		// absolutely temporary
 		client.on('message', function(message) {
 			if(message.ping) {
-				client.sendPong(message.ping.id);
+				client.sendPong(parseInt(message.ping.pingId));
 			}
 		});
 		

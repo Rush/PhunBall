@@ -110,7 +110,7 @@ $(function ()
 	{
 		logMsg("Connected to server");
 		pingInterval = setInterval(function() {
-				network.sendPing(function(diff) { logMsg(diff)});
+				network.sendPing(function(diff) { logMsg("ping " + diff)});
 			}, 1000);
 	});
 

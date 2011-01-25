@@ -10,7 +10,7 @@ function Client(io, ioclient)
 		return (new Date()).valueOf();
 	}
 	self.sendPong = function(pingId) {
-		console.log("send pong!");
+		console.log("send pong! " + pingId);
 		ioclient.send({pong: {pingId: pingId, time: getCurrentTime()}});
 	}
 

@@ -32,7 +32,7 @@ function Network()
 				socket.send({pong: {time: time, serverDelta: 0}});
 			}
 			if(message.pong) {
-				invokeCallback('pong', [message.pong.pingId, message.pong.time]);
+				invokeCallback('pong', [parseInt(message.pong.pingId), message.pong.time]);
 			}
 		});
 		
@@ -45,7 +45,6 @@ function Network()
 			rememberTransport: false
 			});
 		socket.connect();
-//		logMsg("try connect");
 		setNetworkCallbacks(socket);
 
 	}
@@ -80,15 +79,13 @@ function Network()
 	}
 
 	this.sendPing = function(callback) {
-		logMsg("send ping!");
 
-		var pingId = Math.random() * 65000;
+		var pingId = parseInt(Math.random() * 65000);
 		var time = getCurrentTime();
 		socket.send({ping: {pingId: pingId, time: time}});
 
 		var f;
 		self.on('pong', f = function(gotPingId, serverTime) {
-			console.log("Got pong callback!");
 			if(gotPingId == pingId) {
 				callback(getCurrentTime() - time);
 				self.off('pong', f);
