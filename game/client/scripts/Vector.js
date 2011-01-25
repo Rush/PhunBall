@@ -84,6 +84,11 @@ function Vector(_x, _y)
 		this.y = Math.clamp(minY, maxY, this.y);
 	};
 
+	this.equals = function (other)
+	{
+		return this.x == other.x && this.y == other.y;
+	};
+
 	this.toString = function ()
 	{
 		return this.x + " : " + this.y;
