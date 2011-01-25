@@ -28,6 +28,13 @@ var dd = server.on('connection',
 		 );
 
 
+var stdin = process.openStdin();
+stdin.on('data', function(chunk) {
+		if(chunk == "exit\n") {
+			process.exit(0);
+		}
+	});
+
 /*var tick = 0;
 
 var ballState = { position: { x: 250, y: 300} };
