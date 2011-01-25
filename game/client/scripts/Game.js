@@ -8,11 +8,6 @@
 /// <reference path="Network.js" />
 /// <reference path="Simulation.js" />
 
-function logMsg(text)
-{
-	$('#console').append("<span>" + text + "</span>\n");
-}
-
 $(function ()
 {
 	var width = $('#field').width();
@@ -35,21 +30,27 @@ $(function ()
 		network.connect(null, 8081);
 
 		var pingInterval;
-		
-		network.on('connect',
-				   function ()
-				   {
-					   logMsg("Connected to server");
-					   pingInterval = setInterval(function() {
-						   network.sendPing(function(diff) { logMsg("ping " + diff)});
-					   }, 1000);
-				   });
-		
+		var pingSpan = $('#ping');
+
+		network.on('connect', function ()
+		{
+			logMsg("Connected to server");
+
+			pingInterval = setInterval(function ()
+			{
+				network.sendPing(function (diff)
+				{
+					pingSpan.text(diff);
+				});
+			}, 1000);
+		});
+
 		network.on('disconnect', function ()
-				   {
-					   logMsg("Disconnected from server");
-					   clearInterval(pingInterval);
-				   });
+		{
+			logMsg("Disconnected from server");
+
+			clearInterval(pingInterval);
+		});
 	}
 
 	function update(time)
@@ -76,7 +77,7 @@ $(function ()
 		renderer.drawField(field.width, field.height);
 		renderer.drawPlayer(field.player.position, true);
 
-	
+
 		field.players.forEach(function (p)
 		{
 			renderer.drawPlayer(p, false);
