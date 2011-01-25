@@ -1,23 +1,25 @@
 ﻿/// <reference path="Common.js" />
 
-function Vector(_x, _y)
+function Vector(x, y)
 {
-	if (_y === undefined)
+	if (y === undefined)
 	{
-		this.x = this.y = _x || 0;
+		this.x = this.y = x || 0;
 	}
 	else
 	{
-		this.x = _x;
-		this.y = _y;
+		this.x = x;
+		this.y = y;
 	}
+}
 
-	this.clone = function ()
+Vector.prototype = {
+	clone: function ()
 	{
 		return new Vector(this.x, this.y);
-	};
+	},
 
-	this.add = function (x, y)
+	add: function (x, y)
 	{
 		if (y === undefined)
 		{
@@ -29,9 +31,9 @@ function Vector(_x, _y)
 			this.x += x;
 			this.y += y;
 		}
-	};
+	},
 
-	this.sub = function (x, y)
+	sub: function (x, y)
 	{
 		if (y === undefined)
 		{
@@ -43,31 +45,31 @@ function Vector(_x, _y)
 			this.x -= x;
 			this.y -= y;
 		}
-	};
+	},
 
-	this.mul = function (a)
+	mul: function (a)
 	{
 		this.x *= a;
 		this.y *= a;
-	};
+	},
 
-	this.div = function (a)
+	div: function (a)
 	{
 		this.x /= a;
 		this.y /= a;
-	};
+	},
 
-	this.length = function ()
+	length: function ()
 	{
 		return Math.sqrt(this.x * this.x + this.y * this.y);
-	};
+	},
 
-	this.lengthSquared = function ()
+	lengthSquared: function ()
 	{
 		return this.x * this.x + this.y * this.y;
-	};
+	},
 
-	this.normalize = function ()
+	normalize: function ()
 	{
 		var len = this.length();
 
@@ -76,23 +78,23 @@ function Vector(_x, _y)
 			this.x /= len;
 			this.y /= len;
 		}
-	};
+	},
 
-	this.clamp = function (minX, maxX, minY, maxY)
+	clamp: function (minX, maxX, minY, maxY)
 	{
 		this.x = Math.clamp(minX, maxX, this.x);
 		this.y = Math.clamp(minY, maxY, this.y);
-	};
+	},
 
-	this.equals = function (other)
+	equals: function (other)
 	{
 		return this.x == other.x && this.y == other.y;
-	};
+	},
 
-	this.toString = function ()
+	toString: function ()
 	{
 		return this.x + " : " + this.y;
-	};
-}
+	}
+};
 
 module.exports = Vector;

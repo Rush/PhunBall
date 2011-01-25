@@ -59,7 +59,7 @@ $(function ()
 
 		if (!lastMove.equals(move))
 		{
-			network.sendCursorChange(move);
+			network.sendCursorChange({ x: move.x, y: move.y });
 			lastMove.x = move.x;
 			lastMove.y = move.y;
 		}
