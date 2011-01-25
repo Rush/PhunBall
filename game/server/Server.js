@@ -6,7 +6,6 @@ var http = require('http')
 var Client = require("Client");
 
 var extMatch = /.*\.(.*)/;
-extMatch.compile();
 
 function Server(port)
 {
@@ -73,6 +72,18 @@ function Server(port)
 				break;
 			}
 		});
+	
+	function getCurrentTime() {
+		return (new Date()).valueOf();
+	}
+
+
+	function setNetworkCallbacks(client) {		
+		client.on('ping', function(pingId, clientTime) {
+			client.sendPong(pingId, getCurrentTime());
+		});
+		
+	}
 
 	self.listen = function(port) {
 		server.listen(port);
@@ -83,16 +94,18 @@ function Server(port)
 			switch(event) {
 			case 'connection':
 				io.on('connection', function(ioclient) {
-					ioclient.Client = new Client(io, ioclient);
-					callback(ioclient.Client);
+					var client = new Client(io, ioclient);
+					ioclient.client = new Client(io, ioclient);
+					setNetworkCallbacks(client);
+					callback(client);
 				});
 				break;
-			case 'disconnect':
+/*			case 'disconnect':
 			case 'message':
 				io.on(event, callback);
-				break;		
+				break;		*/
 			}
-		}
+		}		
 	}
 		
 
