@@ -7,6 +7,11 @@ function Ball(pos)
 
 	this.position = pos;
 
+	this.update = function (time)
+	{
+		
+	};
+
 	this.draw = function (context)
 	{
 		context.drawImage(ballImage, this.position.x - 12, this.position.y - 12, 24, 24);

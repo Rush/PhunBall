@@ -19,7 +19,10 @@ function Network()
 		socket = undefined;
 	}
 
-	this.on = function(name, callback) {
+	this.on = function (name, callback)
+	{
+		/// <summary>Bind handler to message</summary>
+		/// <param name="name" type="String">connect, disconnect</param>
 		socket.on(name, callback);		
 	}
 	

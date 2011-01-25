@@ -1,61 +1,93 @@
 ﻿/// <reference path="Common.js" />
 
-function Vector(x, y)
+function Vector(_x, _y)
 {
-	if (y === undefined)
+	if (_y === undefined)
 	{
-		this.x = this.y = x || 0;
+		this.x = this.y = _x || 0;
 	}
 	else
 	{
-		this.x = x;
-		this.y = y;
+		this.x = _x;
+		this.y = _y;
 	}
 
-	this.add = function (vec)
+	this.clone = function ()
 	{
-		return new Vector(this.x + vec.x, this.y + vec.y);
-	}
+		return new Vector(this.x, this.y);
+	};
 
-	this.sub = function (vec)
+	this.add = function (x, y)
 	{
-		return new Vector(this.x - vec.x, this.y - vec.y);
-	}
+		if (y === undefined)
+		{
+			this.x += x.x;
+			this.y += x.y;
+		}
+		else
+		{
+			this.x += x;
+			this.y += y;
+		}
+	};
+
+	this.sub = function (x, y)
+	{
+		if (y === undefined)
+		{
+			this.x -= x.x;
+			this.y -= x.y;
+		}
+		else
+		{
+			this.x -= x;
+			this.y -= y;
+		}
+	};
 
 	this.mul = function (a)
 	{
-		return new Vector(this.x * a, this.y * a);
-	}
+		this.x *= a;
+		this.y *= a;
+	};
 
 	this.div = function (a)
 	{
-		return new Vector(this.x / a, this.y / a);
-	}
+		this.x /= a;
+		this.y /= a;
+	};
 
 	this.length = function ()
 	{
 		return Math.sqrt(this.x * this.x + this.y * this.y);
-	}
+	};
 
 	this.lengthSquared = function ()
 	{
 		return this.x * this.x + this.y * this.y;
-	}
+	};
 
 	this.normalize = function ()
 	{
 		var len = this.length();
 
 		if (len != 0)
-			return new Vector(this.x / len, this.y / len);
-		else
-			return new Vector();
-	}
+		{
+			this.x /= len;
+			this.y /= len;
+		}
+	};
+
+	this.clamp = function (minX, maxX, minY, maxY)
+	{
+		this.x = Math.clamp(minX, maxX, this.x);
+		this.y = Math.clamp(minY, maxY, this.y);
+	};
 
 	this.toString = function ()
 	{
 		return this.x + " : " + this.y;
-	}
+	};
 }
 
 module.exports = Vector;
