@@ -14,7 +14,7 @@ var server = new Server;
 server.listen(8081);
 server.basePath = __dirname;
 
-server.on('connection',
+var dd = server.on('connection',
 		  function(client) {
 			  
 			  console.log(client.sessionId + " Connected");
@@ -26,7 +26,6 @@ server.on('connection',
 					   );
 		  }		  
 		 );
-
 
 
 /*var tick = 0;
