@@ -4,6 +4,7 @@
 function Simulation(field)
 {
 	var friction = 0.95;
+	var force = 1000.0;
 
 	function updatePlayer(player, time)
 	{
@@ -22,9 +23,12 @@ function Simulation(field)
 		// TODO: fixed time simulation steps
 	};
 
-	this.applyForce = function (x, y)
+	this.applyForce = function (vector, time)
 	{
-		field.player.velocity.add(x, y);
+		vector.normalize();
+		vector.mul(force * time);
+
+		field.player.velocity.add(vector);
 	};
 }
 
