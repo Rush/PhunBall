@@ -73,14 +73,17 @@ function Server(port)
 			}
 		});
 	
-	function getCurrentTime() {
-		return (new Date()).valueOf();
-	}
-
 
 	function setNetworkCallbacks(client) {		
 		client.on('ping', function(pingId, clientTime) {
-			client.sendPong(pingId, getCurrentTime());
+			client.sendPong(pingId);
+		});
+
+		// absolutely temporary
+		client.on('message', function(message) {
+			if(message.ping) {
+				client.sendPong(message.ping.id);
+			}
 		});
 		
 	}
@@ -99,7 +102,7 @@ function Server(port)
 					setNetworkCallbacks(client);
 					callback(client);
 				});
-				break;
+				break;				
 /*			case 'disconnect':
 			case 'message':
 				io.on(event, callback);

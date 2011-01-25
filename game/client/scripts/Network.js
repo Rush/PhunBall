@@ -1,8 +1,42 @@
 function Network()
 {
-	this.self = this;
+	var self = this;
 	
 	var socket;
+
+	var callbacks = [];
+
+	self.serverDelta = 0;
+
+	function invokeCallback(name, args) {
+		if(callbacks[name]) {
+			for(i = 0;i < callbacks[name].length;++i) {
+				callbacks[name][i].apply(null, args);
+			}
+		}
+	}
+
+	function setNetworkCallbacks(socket) {
+		socket.on('connect', function() {
+			connected = true;
+			invokeCallback('connect', null);
+			
+		});
+		socket.on('disconnect', function() {
+			connected = false;
+			invokeCallback('disconnect', null);
+		});
+		socket.on('message', function(message) {
+			if(message.ping) {
+				var time = parseInt(message.ping.time);
+				socket.send({pong: {time: time, serverDelta: 0}});
+			}
+			if(message.pong) {
+				invokeCallback('pong', [message.pong.pingId, message.pong.time]);
+			}
+		});
+		
+	}
 
 	this.connect = function(host, port) {
 		socket = new io.Socket(host, {
@@ -10,36 +44,57 @@ function Network()
 			//transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling']},
 			rememberTransport: false
 			});
-		socket.on('connected', function() { connected = true; });
-		socket.on('disconnected', function() { connected = false; });
+		socket.connect();
+//		logMsg("try connect");
+		setNetworkCallbacks(socket);
 
 	}
 
 	this.disconnect = function() {
 		socket = undefined;
+		callbacks = undefined;
 	}
 
-	this.on = function (name, callback)
-	{
-		/// <summary>Bind handler to message</summary>
-		/// <param name="name" type="String">connect, disconnect</param>
-		socket.on(name, callback);		
+	this.on = function(name, callback) {
+		if(! callbacks[name])
+			callbacks[name] = [];
+		callbacks[name].push(callback);
 	}
 	
+	this.off = function(name, callback) {
+		if(! callbacks[name])
+			return false;
+		for(i = 0;i < callbacks[name].length;++i) {
+			if(callbacks[name][i] == callback) {
+				callbacks[name].removeAt(i)
+				return true;
+			}
+		}
+		return false;
+	}
+
 	self.connected = false;
 
-	this.ping = function(callback) {
+	function getCurrentTime() {
+		return (new Date()).valueOf();
+	}
+
+	this.sendPing = function(callback) {
+		logMsg("send ping!");
+
 		var pingId = Math.random() * 65000;
-		var time = new Time().valueOf;
-		socket.send({ping: pingId});
-		socket.on('message', function(message) {
-				if(message.ping) {
-					if(message.ping == pingId) {
-						var time2 = new Time().valueOf;
-						callback(time2 - time);
-					}
-				}
-			});	
+		var time = getCurrentTime();
+		socket.send({ping: {pingId: pingId, time: time}});
+
+		var f;
+		self.on('pong', f = function(gotPingId, serverTime) {
+			console.log("Got pong callback!");
+			if(gotPingId == pingId) {
+				callback(getCurrentTime() - time);
+				self.off('pong', f);
+			}
+		});
+
 	}
 	this.sendCursorChange = function(vector) {
 		socket.send({cursorVector: {x: vector.x, y: vector.y}});
@@ -47,6 +102,5 @@ function Network()
 	this.sendKickChange = function(isKicking) {
 		socket.send({kick: isKicking});
 	}
-
 
 }

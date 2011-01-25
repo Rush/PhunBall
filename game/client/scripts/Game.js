@@ -6,6 +6,11 @@
 /// <reference path="Network.js" />
 /// <reference path="Simulation.js" />
 
+function logMsg(text)
+{
+	$('#console').append("<span>" + text + "</span>\n");
+}
+
 $(function ()
 {
 	var context = $('#field')[0].getContext('2d');
@@ -54,11 +59,6 @@ $(function ()
 		}
 	});
 
-	function logMsg(text)
-	{
-		$('#console').append("<span>" + text + "</span>\n");
-	}
-
 	/*function onPlayerConnected(id, x, y)
 	{
 	logMsg("Player " + id + " joined at x=" + x + " y=" + y);
@@ -104,15 +104,23 @@ $(function ()
 
 	network.connect(null, 8081);
 
+	var pingInterval;
+
 	network.on('connect', function ()
 	{
 		logMsg("Connected to server");
+		pingInterval = setInterval(function() {
+				network.sendPing(function(diff) { logMsg(diff)});
+			}, 1000);
 	});
 
 	network.on('disconnect', function ()
 	{
 		logMsg("Disconnected from server");
+		clearInterval(pingInterval);
 	});
+
+	
 
 	/*network.on('message', function (message)
 	{
