@@ -11,3 +11,5 @@ function Field(width, height)
 	this.player = new Player(0, "Rav", new Vector(0, 0));
 	this.ball = new Ball(new Vector(width / 2, height / 2));
 }
+
+module.exports = Field;

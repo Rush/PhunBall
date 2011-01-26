@@ -4,6 +4,8 @@ function Client(io, ioclient)
     var callbacks = [];
 
     self.clientDelta = 0;
+    self.id = ioclient.sessionId;;
+
 
     function invokeCallback(name, args) {
 		if(callbacks[name]) {
@@ -35,6 +37,13 @@ function Client(io, ioclient)
 		return (new Date()).valueOf();
 	}
 
+    function clientToServerTime(someTime) {
+        return someTime + self.clientDelta;
+    }
+    function serverToClientTime(someTIme) {
+        return someTime - self.clientDelta;
+    }
+
     function setNetworkCallbacks() {
         ioclient.on('message', function(message) {
             if(message.ping) {
@@ -49,14 +58,12 @@ function Client(io, ioclient)
                     parseInt( (self.clientDelta + newDelta)/2 );
                 console.log("Current delta " + self.clientDelta);
             }
-
         });
     }
     setNetworkCallbacks();
 
 
     self.io = io;
-	self.sessionId = ioclient.sessionId;
 	self.on = function(event, callback) { ioclient.on(event, callback); };
 
 
@@ -69,9 +76,8 @@ function Client(io, ioclient)
 	};
 
 	self.on('message', function(msg) {
-
-			console.log(msg);
-		});
+		console.log(msg);
+	});
 
 }
 module.exports=Client;
