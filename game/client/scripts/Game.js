@@ -20,8 +20,11 @@ $(function ()
 	var lastTime = new Date();
 	var lastMove = new Vector();
 
+
 	function initialize()
 	{
+
+
 		function logMsg(text)
 		{
 			$('#console').append("<span>" + text + "</span>\n");
@@ -32,12 +35,11 @@ $(function ()
 		var pingInterval;
 		var pingSpan = $('#ping');
 
-		network.on('connect', function ()
-		{
+		network.on('connect', function () {
 			logMsg("Connected to server");
 
 			pingInterval = setInterval(function ()
-			{
+			                           {
 				network.sendPing(function (diff)
 				{
 					pingSpan.text(diff);

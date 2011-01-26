@@ -34,8 +34,10 @@ function Server(port)
 		fs.readFile(self.basePath + path,
 					function (err, data)
 					{
-						if (err)
-							return send404(res);
+						if (err) {
+                         	send404(res);
+                            return;
+                        }
 						res.writeHead(200, { 'Content-Type': file2mime(path) });
 						res.write(data, 'utf8');
 						res.end();
@@ -61,56 +63,51 @@ function Server(port)
 				fs.readFile(__dirname + "/node.log",
 							function (err, data)
 							{
-								if (err)
-									return send404(res);
+								if(err) {
+                                    send404(res);
+                                    return;
+                                }
 								res.writeHead(200, { 'Content-Type': 'text/html' });
 								res.write("<html><head><title>Output log</title></head><body><pre>");
 								res.write(data, 'utf8');
 								res.write("</pre></body></html>");
 								res.end();
-							})
+							});
 				break;
 			}
 		});
-	
 
-	function setNetworkCallbacks(client) {		
+
+	function setNetworkCallbacks(client) {
 		client.on('ping', function(pingId, clientTime) {
 			client.sendPong(pingId);
 		});
-
-		// absolutely temporary
-		client.on('message', function(message) {
-			if(message.ping) {
-				client.sendPong(parseInt(message.ping.pingId));
-			}
-		});
-		
 	}
 
 	self.listen = function(port) {
 		server.listen(port);
 		io = io.listen(server);
-		
-		
+
+
 		self.on = function(event, callback) {
 			switch(event) {
 			case 'connection':
 				io.on('connection', function(ioclient) {
+
+					if(ioclient.connection) {
+						ioclient.connection.setNoDelay(true);
+					}
+
 					var client = new Client(io, ioclient);
 					ioclient.client = new Client(io, ioclient);
 					setNetworkCallbacks(client);
 					callback(client);
 				});
-				break;				
-/*			case 'disconnect':
-			case 'message':
-				io.on(event, callback);
-				break;		*/
+				break;
 			}
-		}		
-	}
-		
+		};
+	};
+
 
 	self.basePath = __dirname;
 }
