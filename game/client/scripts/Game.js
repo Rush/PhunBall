@@ -77,7 +77,6 @@ $(function ()
 		renderer.drawField(field.width, field.height);
 		renderer.drawPlayer(field.player.position, true);
 
-
 		field.players.forEach(function (p)
 		{
 			renderer.drawPlayer(p, false);
