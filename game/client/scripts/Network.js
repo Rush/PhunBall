@@ -51,6 +51,9 @@ function Network()
             else if(message.newPlayer) {
                 invokeCallback('newPlayer', [message.newPlayer, parseInt(message.time)]);
             }
+            else if(message.playerDisconnected) {
+                invokeCallback('playerDisconnected', [message.playerDisconnected.id]);
+            }
             else if(message.otherKickChange) {
                 invokeCallback('otherKickChange', [message.id, message.isKicking]);
             }

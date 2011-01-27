@@ -112,6 +112,9 @@ function Client(server, io, ioclient)
         ioclient.send({otherCursorChange: {id: id, cursorChange: cursorChange}, time: getCurrentClientTime()});
     };
 
+    self.sendPlayerDisconnected = function(id) {
+        ioclient.send({playerDisconnected: {id: id}});
+    };
 
 	self.on('message', function(msg) {
 		console.log(msg);

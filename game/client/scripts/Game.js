@@ -65,6 +65,12 @@ $(function ()
             field.addPlayer(p);
 		});
 
+        network.on('playerDisconnected', function(id) {
+            var p = field.getPlayerById(id);
+            field.removePlayer(p);
+            logMsg("Player " + p.id  + " disconnected");
+        });
+
         network.on('otherCursorChange', function(id, cursorChange) {
             var playerCursor = field.getPlayerById(id).cursor;
             playerCursor.x = cursorChange.x;

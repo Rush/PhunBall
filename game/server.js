@@ -93,6 +93,7 @@ server.on('connection', function (client)
 	client.on('disconnect', function () {
 		field.players.remove(client.player);
 		console.log(client.id + " Disconnected");
+        server.broadcast(function(c) {c.sendPlayerDisconnected(client.id);});
 	});
 });
 
