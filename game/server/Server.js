@@ -85,6 +85,12 @@ function Server(port)
 		});
 	}
 
+    self.broadcast = function(callback) {
+        self.clients.forEach(function(client) {
+            callback(client);
+        });
+    };
+
     self.listen = function(port) {
 		server.listen(port);
 		io = io.listen(server);

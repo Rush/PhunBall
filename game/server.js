@@ -15,8 +15,10 @@ globalInclude('Field');
 
 /* extend original Array class for methods such as removeAt */
 require('Acx/Array');
+require('Acx/Common');
 
 var Server = require('Server');
+var Simulation = require('Simulation');
 
 var server = new Server;
 server.listen(8081);
@@ -25,15 +27,33 @@ server.basePath = __dirname;
 var width = 840;
 var height = 408;
 var field = new Field(840, 408);
+var simulation = new Simulation(field);
 
-function allocatePlayer(client)
-{
-	return new Player(client.id, "dupa", new Vector(20, 20));
-}
+
+var lastTime = new Date();
+setInterval(function() {
+    var now = new Date();
+	var time = (now.valueOf() - lastTime.valueOf()) / 1000;
+	lastTime = now;
+
+    simulation.update(time);
+}, 10);
+
+
+setInterval(function() {
+    var state = createFullState(field);
+    server.broadcast( function(client) {client.sendFullState(state);});
+}, 1000);
 
 function createFullState(field)
 {
     return field.players.map( function(e) { return {id: e.id, name: e.name, position: e.position, velocity: e.velocity}; });;
+}
+
+
+function allocatePlayer(client)
+{
+	return new Player(client.id, "dupa", new Vector(20, 20));
 }
 
 server.on('connection', function (client)
@@ -45,6 +65,18 @@ server.on('connection', function (client)
 	field.players.add(client.player = allocatePlayer(client));
 
 	client.broadcast(function (other) { other.sendNewPlayer(client.player); });
+
+    /* TODO: guard against DoS message spamming here since one message gets multiplied
+     * for all the other clients.
+     */
+
+    client.on('kickChange', function(kickState, time) {
+                  client.broadcast(function(other) { other.sendOtherKickChange(client.id, kickState);});
+    });
+    client.on('cursorChange', function(cursorChange, time) {
+                  client.broadcast(function(other) { other.sendOtherCursorChange(client.id, cursorChange);});
+        console.log("broadcast cursorChange");
+    });
 
 	client.on('disconnect', function ()
 	{

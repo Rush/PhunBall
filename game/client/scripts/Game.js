@@ -61,11 +61,8 @@ $(function ()
 		{
 			var msg = "Got full state, players: ";
 
-			console.log(fullState.state);
-
 			for (i = 0; i < fullState.state.length; ++i)
 			{
-				console.log(fullState.state[i]);
 				msg += fullState.state[i].id + ", ";
 			}
 

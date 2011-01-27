@@ -4,7 +4,7 @@ function Client(server, io, ioclient)
     var callbacks = [];
 
     self.clientDelta = 0;
-    self.id = ioclient.sessionId;;
+    self.id = ioclient.sessionId;
 
 
     function invokeCallback(name, args) {
@@ -50,8 +50,21 @@ function Client(server, io, ioclient)
                     parseInt( (self.clientDelta + newDelta)/2 );
                 console.log("Current delta for client " + self.id + " = "+ self.clientDelta);
             }
+            else if(message.cursorChange) {
+                var vec = new Vector(message.cursorChange);
+
+                // sanitize cursor vector
+                if( (vec.x == 1 || vec.x == 0 || vec.x == -1) &&
+                    (vec.y == 1 || vec.y == 0 || vec.y == -1)) {
+
+                    invokeCallback('cursorChange', [new Vector(message.cursorChange), parseInt(message.time)]);
+                }
+            }
+            else if(message.kickChange) {
+                invokeCallback('kickChange', [Boolean(message.kickChange.isKicking), parseInt(message.time)]);
+            }
         });
-//        	self.on = function(event, callback) { ioclient.on(event, callback); };
+
         ioclient.on('disconnect', function() {
             invokeCallback('disconnect');
             server.clients.remove(self);
@@ -73,11 +86,10 @@ function Client(server, io, ioclient)
     }
 
     self.broadcast = function(callback) {
-        for(i = 0;i < server.clients.length;++i) {
-            if(server.clients[i] != self) {
-                callback(server.clients[i]);
-            }
-        }
+        server.clients.forEach(function(client) {
+            if(client != self)
+                callback(client);
+        });
     };
 
 	self.sendPong = function(pingId) {
@@ -92,6 +104,12 @@ function Client(server, io, ioclient)
     self.sendFullState = function(fullState) {
         console.log("sent full state! ");
         ioclient.send({fullState: {state: fullState}, time: getCurrentClientTime()});
+    };
+    self.sendOtherKickChange = function(id, isKicking) {
+        ioclient.send({otherKickChange: {id: id, isKicking: isKicking}, time: getCurrentClientTime()});
+    };
+    self.sendOtherCursorChange = function(id, cursorChange) {
+        ioclient.send({otherCursorChange: {id: id, cursorChange: cursorChange}, time: getCurrentClientTime()});
     };
 
 

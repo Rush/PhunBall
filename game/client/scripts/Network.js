@@ -49,6 +49,12 @@ function Network()
             else if(message.newPlayer) {
                 invokeCallback('newPlayer', [message.newPlayer, parseInt(message.time)]);
             }
+            else if(message.otherKickChange) {
+                invokeCallback('otherKickChange', [message.id, message.isKicking]);
+            }
+            else if(message.otherCursorChange) {
+                invokeCallback('otherCursorChange', [message.id, message.cursorChange]);
+            }
 
 		});
 
@@ -94,7 +100,7 @@ function Network()
 
 	};
 	this.sendCursorChange = function(vector) {
-		socket.send({cursorVector: {x: vector.x, y: vector.y}, time: getCurrentTime()});
+		socket.send({cursorChange: {x: vector.x, y: vector.y}, time: getCurrentTime()});
 	};
 	this.sendKickChange = function(isKicking) {
 		socket.send({kick: {isKicking: isKicking}, time: getCurrentTime()});
