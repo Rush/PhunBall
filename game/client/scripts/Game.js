@@ -32,11 +32,12 @@ $(function ()
 		var pingInterval;
 		var pingSpan = $('#ping');
 
-		network.on('connect', function () {
+		network.on('connect', function ()
+		{
 			logMsg("Connected to server");
 
 			pingInterval = setInterval(function ()
-			                           {
+			{
 				network.sendPing(function (diff)
 				{
 					pingSpan.text(diff);
@@ -51,20 +52,25 @@ $(function ()
 			clearInterval(pingInterval);
 		});
 
-        network.on('newPlayer', function(player, time) {
-            logMsg("New player connected with id " + player.id + " name " + player.name);
-        });
+		network.on('newPlayer', function (player, time)
+		{
+			logMsg("New player connected with id " + player.id + " name " + player.name);
+		});
 
-        network.on('fullState', function(fullState) {
-            var msg = "Got full state, players: ";
-            console.log(fullState.state);
-            for(i = 0;i < fullState.state.length;++i) {
-                console.log(fullState.state[i]);
-                msg += fullState.state[i].id + ", ";
-            }
-            logMsg(msg);
-        });
+		network.on('fullState', function (fullState)
+		{
+			var msg = "Got full state, players: ";
 
+			console.log(fullState.state);
+
+			for (i = 0; i < fullState.state.length; ++i)
+			{
+				console.log(fullState.state[i]);
+				msg += fullState.state[i].id + ", ";
+			}
+
+			logMsg(msg);
+		});
 	}
 
 	function update(time)
@@ -89,14 +95,14 @@ $(function ()
 	function draw()
 	{
 		renderer.drawField(field.width, field.height);
-		renderer.drawPlayer(field.player.position, true);
+		renderer.drawPlayer(field.player, true);
 
 		field.players.forEach(function (p)
 		{
 			renderer.drawPlayer(p, false);
 		});
 
-		renderer.drawBall(field.ball.position);
+		renderer.drawBall(field.ball);
 	}
 
 	// main
@@ -112,5 +118,4 @@ $(function ()
 		update(time);
 		draw();
 	}, 10);
-
 });

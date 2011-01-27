@@ -6,8 +6,8 @@
 // IRenderer
 // {
 //     drawField(width, height);
-//     drawPlayer(position, me); // number, team, kicking
-//     drawBall(position);
+//     drawPlayer(player, me);
+//     drawBall(ball);
 // }
 
 // IInput

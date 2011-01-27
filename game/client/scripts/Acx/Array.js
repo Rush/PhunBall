@@ -1,27 +1,10 @@
 // Additional array helper methods
 
-// TEMP: use native methods
 Array.prototype.enqueue = Array.prototype.push;
 Array.prototype.dequeue = Array.prototype.shift;
 Array.prototype.prepend = Array.prototype.unshift;
-Array.prototype.select = Array.prototype.map;
-Array.prototype.where = Array.prototype.filter;
 Array.prototype.all = Array.prototype.every;
 Array.prototype.any = Array.prototype.some;
-
-// TODO: insert() using splice splice(startIndex, [howMany, [value1, ...]])
-// TEMP: for backward compatibility, change to forKeyValue ?
-Array.prototype.foreach = function (callback)
-{
-	for (var i in this)
-	{
-		if (this.hasOwnProperty(i))
-		{
-			if (callback.call(this[i], this[i], i) === false)
-				break;
-		}
-	}
-};
 
 Array.prototype.add = function (element)
 {

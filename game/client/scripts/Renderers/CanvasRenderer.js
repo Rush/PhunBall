@@ -22,23 +22,27 @@ function CanvasRenderer(canvas)
 			context.drawImage(fieldImage, 0, 0, width, height);
 	};
 
-	this.drawPlayer = function (position, me)
+	this.drawPlayer = function (player, me)
 	{
+		var name = player.name;
+		var position = player.position;
+		var metrics = context.measureText(name);
+
 		if (myImage.complete && playerImage.complete)
 			context.drawImage(me ? myImage : playerImage, position.x - 16, position.y - 16, 32, 32);
-        var name = "dupa";
-        var metrics = context.measureText(name);
 
-        context.textBaseline = "top";
-        context.font = "12px solid helvetica";
-        context.fillStyle = "black";
-        context.fillText(name, position.x - metrics.width/2 + 1, position.y + 16 + 1);
-        context.fillStyle = "white";
-        context.fillText(name, position.x - metrics.width/2, position.y + 16);
+		context.textBaseline = "top";
+		context.font = "12px helvetica";
+		context.fillStyle = "black";
+		context.fillText(name, position.x - metrics.width / 2 + 1, position.y + 16 + 1);
+		context.fillStyle = "white";
+		context.fillText(name, position.x - metrics.width / 2, position.y + 16);
 	};
 
-	this.drawBall = function (position)
+	this.drawBall = function (ball)
 	{
+		var position = ball.position;
+
 		if (ballImage.complete)
 			context.drawImage(ballImage, position.x - 12, position.y - 12, 24, 24);
 	};

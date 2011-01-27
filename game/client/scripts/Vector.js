@@ -4,7 +4,15 @@ function Vector(x, y)
 {
 	if (y === undefined)
 	{
-		this.x = this.y = x || 0;
+		if (x && x.x)
+		{
+			this.x = x.x;
+			this.y = x.y;
+		}
+		else
+		{
+			this.x = this.y = x || 0;
+		}
 	}
 	else
 	{
@@ -13,7 +21,8 @@ function Vector(x, y)
 	}
 }
 
-Vector.prototype = {
+Vector.prototype =
+{
 	clone: function ()
 	{
 		return new Vector(this.x, this.y);
@@ -96,10 +105,10 @@ Vector.prototype = {
 		return this.x + " : " + this.y;
 	},
 
-    toStruct: function()
-    {
-        return {x: this.x, y: this.y};
-    }
+	toStruct: function ()
+	{
+		return { x: this.x, y: this.y };
+	}
 };
 
 module.exports = Vector;
