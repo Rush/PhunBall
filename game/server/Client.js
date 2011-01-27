@@ -51,13 +51,13 @@ function Client(server, io, ioclient)
                 console.log("Current delta for client " + self.id + " = "+ self.clientDelta);
             }
             else if(message.cursorChange) {
-                var vec = new Vector(message.cursorChange);
+                var vec = new Vector(message.cursorChange.x, message.cursorChange.y);
 
                 // sanitize cursor vector
                 if( (vec.x == 1 || vec.x == 0 || vec.x == -1) &&
                     (vec.y == 1 || vec.y == 0 || vec.y == -1)) {
 
-                    invokeCallback('cursorChange', [new Vector(message.cursorChange), parseInt(message.time)]);
+                    invokeCallback('cursorChange', [new Vector(message.cursorChange.x, message.cursorChange.y), parseInt(message.time)]);
                 }
             }
             else if(message.kickChange) {

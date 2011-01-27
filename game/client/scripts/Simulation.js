@@ -21,11 +21,11 @@ function Simulation(field)
     {
         simulationTimeAgg += time;
 
-     
+
         while (simulationTimeAgg > simulationStep)
         {
             var step = simulationStep;
-            
+
             //TODO: Log this somewhere
             //TODO: Think about repairing this differently
             //      Situation can be fixed by flagging client state as corrupted and pulling whole state from server
@@ -35,7 +35,7 @@ function Simulation(field)
                 step = simulationStep * 10;
             }
 
-            updatePlayer(field.player, step);
+            field.players.forEach(function(player) { updatePlayer(player, step); });
             simulationTimeAgg -= step;
         }
 
@@ -43,12 +43,16 @@ function Simulation(field)
         // TODO: update other players
     };
 
-    this.applyForce = function (vector, time)
+    var forceVector = new Vector(0, 0);
+    this.applyForce = function (player, vector, time)
     {
+        forceVector.x = vector.x;
+        forceVector.y = vector.y;
+        vector = forceVector;
         vector.normalize();
         vector.mul(force * time);
 
-        field.player.velocity.add(vector);
+        player.velocity.add(vector);
     };
 }
 

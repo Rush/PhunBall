@@ -20,6 +20,10 @@ $(function ()
 	var lastTime = new Date();
 	var lastMove = new Vector();
 
+    var fullStateCounter = 0;
+
+    var myId = 0;
+
 	function initialize()
 	{
 		function logMsg(text)
@@ -32,9 +36,10 @@ $(function ()
 		var pingInterval;
 		var pingSpan = $('#ping');
 
-		network.on('connect', function ()
+		network.on('connect', function (id)
 		{
-			logMsg("Connected to server");
+			myId = id;
+            logMsg("Connected to server with id " + id);
 
 			pingInterval = setInterval(function ()
 			{
@@ -43,6 +48,7 @@ $(function ()
 					pingSpan.text(diff);
 				});
 			}, 1000);
+            fullStateCounter = 0;
 		});
 
 		network.on('disconnect', function ()
@@ -55,25 +61,43 @@ $(function ()
 		network.on('newPlayer', function (player, time)
 		{
 			logMsg("New player connected with id " + player.id + " name " + player.name);
+            var p = new Player(player.id, player.name, new Vector(player.position));
+            field.addPlayer(p);
 		});
+
+        network.on('otherCursorChange', function(id, cursorChange) {
+            var playerCursor = field.getPlayerById(id).cursor;
+            playerCursor.x = cursorChange.x;
+            playerCursor.y = cursorChange.y;
+        });
 
 		network.on('fullState', function (fullState)
 		{
-			var msg = "Got full state, players: ";
-
-			for (i = 0; i < fullState.state.length; ++i)
-			{
-				msg += fullState.state[i].id + ", ";
-			}
-
-			logMsg(msg);
+            if(fullStateCounter++ == 0) { // first full state received
+			    var msg = "Got full state, players: ";
+			    fullState.state.forEach(function(e) {
+				    msg += e.id + ", ";
+                    var player = new Player(e.id, e.name, new Vector(e.position));
+                    field.addPlayer(player);
+                    if(e.id == myId)
+                        field.player = player;
+			    });
+			    logMsg(msg);
+            }
+            else {
+                fullState.state.forEach(function(e) {
+                    var p = field.getPlayerById(e.id);
+                    p.position = new Vector(e.position.x, e.position.y);
+                    p.velocity = new Vector(e.velocity.x, e.velocity.y);
+                });
+            };
 		});
 	}
 
 	function update(time)
 	{
 		var move = input.getMovement();
-
+        field.player.cursor = move;
 		if (!lastMove.equals(move))
 		{
 			network.sendCursorChange({ x: move.x, y: move.y });
@@ -81,10 +105,10 @@ $(function ()
 			lastMove.y = move.y;
 		}
 
-		if (move.x != 0 || move.y != 0)
-			simulation.applyForce(move, time);
-
-		// 'move' is being changed by applyForce
+		field.players.forEach(function(player) {
+            if (player.cursor.x != 0 || player.cursor.y != 0)
+			    simulation.applyForce(player, player.cursor, time);
+        });
 
 		simulation.update(time);
 	}
@@ -103,7 +127,6 @@ $(function ()
 	}
 
 	// main
-
 	initialize();
 
 	setInterval(function ()

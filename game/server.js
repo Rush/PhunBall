@@ -36,8 +36,14 @@ setInterval(function() {
 	var time = (now.valueOf() - lastTime.valueOf()) / 1000;
 	lastTime = now;
 
+    field.players.forEach(function(player) {
+        if(player.cursor.x != 0 || player.cursor.y != 0) {
+            simulation.applyForce(player, player.cursor, time);
+        }
+    });
+
     simulation.update(time);
-}, 10);
+}, 100);
 
 
 setInterval(function() {
@@ -53,16 +59,20 @@ function createFullState(field)
 
 function allocatePlayer(client)
 {
-	return new Player(client.id, "dupa", new Vector(20, 20));
+	return new Player(client.id, client.id.toString(), new Vector(Math.random() * width, Math.random() * height));
 }
 
 server.on('connection', function (client)
 {
 	console.log(client.id + " Connected");
 
-	client.sendFullState(createFullState(field));
-
 	field.players.add(client.player = allocatePlayer(client));
+
+    client.player.cursor = new Vector(0, 0);
+
+    var state = createFullState(field);
+    console.log(state);
+    client.sendFullState(state);
 
 	client.broadcast(function (other) { other.sendNewPlayer(client.player); });
 
@@ -70,16 +80,17 @@ server.on('connection', function (client)
      * for all the other clients.
      */
 
-    client.on('kickChange', function(kickState, time) {
-                  client.broadcast(function(other) { other.sendOtherKickChange(client.id, kickState);});
+    client.on('kickChange', function(isKicking, time) {
+        client.broadcast(function(other) { other.sendOtherKickChange(client.id, isKicking);});
+        field.getPlayerById(client.id).isKicking = isKicking;
     });
     client.on('cursorChange', function(cursorChange, time) {
-                  client.broadcast(function(other) { other.sendOtherCursorChange(client.id, cursorChange);});
-        console.log("broadcast cursorChange");
+        client.broadcast(function(other) { other.sendOtherCursorChange(client.id, cursorChange);});
+        client.player.cursor = cursorChange;
+        console.log("broadcast cursorChange " + cursorChange.x + " " + cursorChange.y);
     });
 
-	client.on('disconnect', function ()
-	{
+	client.on('disconnect', function () {
 		field.players.remove(client.player);
 		console.log(client.id + " Disconnected");
 	});

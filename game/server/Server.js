@@ -104,8 +104,10 @@ function Server(port)
 						ioclient.connection.setNoDelay(true);
 					}
 
+
 					var client = new Client(self, io, ioclient);
                     self.clients.add(client);
+                    ioclient.send({hello: {id: client.id}});
 
 					ioclient.client = client;
 					setNetworkCallbacks(client);

@@ -26,8 +26,6 @@ function Network()
 
 	function setNetworkCallbacks(socket) {
 		socket.on('connect', function() {
-			connected = true;
-			invokeCallback('connect', null);
 
 		});
 		socket.on('disconnect', function() {
@@ -35,7 +33,11 @@ function Network()
 			invokeCallback('disconnect', null);
 		});
 		socket.on('message', function(message) {
-			if(message.ping) {
+            if(message.hello) {
+                connected = true;
+			    invokeCallback('connect', [message.hello.id]);
+            }
+			else if(message.ping) {
 				var time = parseInt(message.ping.time);
 				socket.send({pong: {time: time, serverDelta: 0}});
 			}
@@ -53,7 +55,7 @@ function Network()
                 invokeCallback('otherKickChange', [message.id, message.isKicking]);
             }
             else if(message.otherCursorChange) {
-                invokeCallback('otherCursorChange', [message.id, message.cursorChange]);
+                invokeCallback('otherCursorChange', [message.otherCursorChange.id, message.otherCursorChange.cursorChange]);
             }
 
 		});
