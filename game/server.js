@@ -33,13 +33,7 @@ function allocatePlayer(client)
 
 function createFullState(field)
 {
-	var players = field.players;
-	var fullState = [];
-	for (i = 0; i < players.length; ++i)
-	{
-		fullState.push({ id: players[i].id, name: players[i].name, position: players[i].position.toStruct(), velocity: players[i].velocity.toStruct() });
-	}
-	return fullState;
+    return field.players.map( function(e) { return {id: e.id, name: e.name, position: e.position, velocity: e.velocity}; });;
 }
 
 server.on('connection', function (client)

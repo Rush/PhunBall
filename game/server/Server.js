@@ -85,20 +85,6 @@ function Server(port)
 		});
 	}
 
-	this.addClient = function(client) {
-        self.clients.push(client);
-    };
-    this.removeClient = function(client) {
-        var clients = self.clients;
-        for(i=0;i<clients.length;++i) {
-            if(clients[i] == client) {
-                clients.removeAt(i);
-                break;
-            }
-        }
-    };
-
-
     self.listen = function(port) {
 		server.listen(port);
 		io = io.listen(server);
@@ -113,7 +99,7 @@ function Server(port)
 					}
 
 					var client = new Client(self, io, ioclient);
-                    self.addClient(client);
+                    self.clients.add(client);
 
 					ioclient.client = client;
 					setNetworkCallbacks(client);

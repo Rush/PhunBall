@@ -8,29 +8,21 @@ function Client(server, io, ioclient)
 
 
     function invokeCallback(name, args) {
-		if(callbacks[name]) {
-			for(i = 0;i < callbacks[name].length;++i) {
-				callbacks[name][i].apply(null, args);
-			}
+        if(callbacks[name]) {
+            callbacks[name].forEach(function(e) { e.apply(null, args); });
 		}
 	}
 
     this.on = function(name, callback) {
 		if(! callbacks[name])
 			callbacks[name] = [];
-		callbacks[name].push(callback);
+		callbacks[name].add(callback);
 	};
 
 	this.off = function(name, callback) {
 		if(! callbacks[name])
 			return false;
-		for(i = 0;i < callbacks[name].length;++i) {
-			if(callbacks[name][i] == callback) {
-				callbacks[name].removeAt(i);
-				return true;
-			}
-		}
-		return false;
+        return callbacks[name].remove(callback);
 	};
 
     function getCurrentTime() {
@@ -62,7 +54,7 @@ function Client(server, io, ioclient)
 //        	self.on = function(event, callback) { ioclient.on(event, callback); };
         ioclient.on('disconnect', function() {
             invokeCallback('disconnect');
-            server.removeClient(self);
+            server.clients.remove(self);
         });
 
     }

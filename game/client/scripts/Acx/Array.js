@@ -19,7 +19,11 @@ Array.prototype.removeAt = function (index)
 
 Array.prototype.remove = function (item)
 {
-	this.removeAt(this.indexOf(item));
+	var idx = this.indexOf(item);
+    if(idx == -1)
+        return false;
+    this.removeAt(idx);
+    return true;
 };
 
 Array.prototype.insert = function (index, item)

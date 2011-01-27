@@ -7,10 +7,8 @@ function Network()
 	self.serverDelta = 0;
 
     function invokeCallback(name, args) {
-		if(callbacks[name]) {
-			for(i = 0;i < callbacks[name].length;++i) {
-				callbacks[name][i].apply(null, args);
-			}
+        if(callbacks[name]) {
+            callbacks[name].forEach(function(e) { e.apply(null, args); });
 		}
 	}
 
@@ -23,13 +21,7 @@ function Network()
 	this.off = function(name, callback) {
 		if(! callbacks[name])
 			return false;
-		for(i = 0;i < callbacks[name].length;++i) {
-			if(callbacks[name][i] == callback) {
-				callbacks[name].removeAt(i);
-				return true;
-			}
-		}
-		return false;
+		return callbacks[name].remove(callback);
 	};
 
 	function setNetworkCallbacks(socket) {
