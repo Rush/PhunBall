@@ -5,3 +5,4 @@ function Ball(position)
 {
 	this.position = position;
 }
+module.exports = Ball;

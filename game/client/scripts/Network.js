@@ -47,9 +47,17 @@ function Network()
 				var time = parseInt(message.ping.time);
 				socket.send({pong: {time: time, serverDelta: 0}});
 			}
-			if(message.pong) {
-				invokeCallback('pong', [parseInt(message.pong.pingId), message.pong.time]);
+			else if(message.pong) {
+				invokeCallback('pong', [parseInt(message.pong.pingId), parseInt(message.pong.time), parseInt(message.time)]);
 			}
+            else if(message.fullState) {
+                invokeCallback('fullState', [message.fullState, parseInt(message.time)]);
+            }
+
+            else if(message.newPlayer) {
+                invokeCallback('newPlayer', [message.newPlayer, parseInt(message.time)]);
+            }
+
 		});
 
 	}
@@ -57,7 +65,7 @@ function Network()
 	this.connect = function(host, port) {
 		socket = new io.Socket(host, {
 			port: port,
-			//transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling']},
+			transports: ['websocket', 'flashsockett', 'htmlfile', 'xhr-multipart', 'xhr-polling'],
 			rememberTransport: false
 			});
 		socket.connect();

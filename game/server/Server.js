@@ -10,6 +10,7 @@ var extMatch = /.*\.(.*)/;
 function Server(port)
 {
 	var self = this;
+    this.clients = [];
 
 	send404 = function (res)
 	{
@@ -84,7 +85,21 @@ function Server(port)
 		});
 	}
 
-	self.listen = function(port) {
+	this.addClient = function(client) {
+        self.clients.push(client);
+    };
+    this.removeClient = function(client) {
+        var clients = self.clients;
+        for(i=0;i<clients.length;++i) {
+            if(clients[i] == client) {
+                clients.removeAt(i);
+                break;
+            }
+        }
+    };
+
+
+    self.listen = function(port) {
 		server.listen(port);
 		io = io.listen(server);
 
@@ -93,13 +108,14 @@ function Server(port)
 			switch(event) {
 			case 'connection':
 				io.on('connection', function(ioclient) {
-
 					if(ioclient.connection) {
 						ioclient.connection.setNoDelay(true);
 					}
 
-					var client = new Client(io, ioclient);
-					ioclient.client = new Client(io, ioclient);
+					var client = new Client(self, io, ioclient);
+                    self.addClient(client);
+
+					ioclient.client = client;
 					setNetworkCallbacks(client);
 					callback(client);
 				});

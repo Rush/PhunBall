@@ -20,11 +20,8 @@ $(function ()
 	var lastTime = new Date();
 	var lastMove = new Vector();
 
-
 	function initialize()
 	{
-
-
 		function logMsg(text)
 		{
 			$('#console').append("<span>" + text + "</span>\n");
@@ -53,6 +50,21 @@ $(function ()
 
 			clearInterval(pingInterval);
 		});
+
+        network.on('newPlayer', function(player, time) {
+            logMsg("New player connected with id " + player.id + " name " + player.name);
+        });
+
+        network.on('fullState', function(fullState) {
+            var msg = "Got full state, players: ";
+            console.log(fullState.state);
+            for(i = 0;i < fullState.state.length;++i) {
+                console.log(fullState.state[i]);
+                msg += fullState.state[i].id + ", ";
+            }
+            logMsg(msg);
+        });
+
 	}
 
 	function update(time)

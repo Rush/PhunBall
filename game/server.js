@@ -1,32 +1,43 @@
-/*var http = require('http')
-, url = require('url')
-, fs = require('fs')
-, io = require('../node-bin')
-, sys = require(process.binding('natives').util ? 'util' : 'sys')
-, server;*/
-
+function globalInclude(className)
+{
+    var something = require(className);
+    global[className] = something;
+}
 require.paths.unshift("./client/scripts/");
+require.paths.unshift("./client/scripts/Models");
 require.paths.unshift("./server/");
-var Vector = require('Vector');
-global.Vector = Vector;
-var Server = require('Server');
+globalInclude('Vector');
+globalInclude('Ball');
+globalInclude('Player');
+globalInclude('Field');
 
-var Player = require('Models/Player');
-global.Player = Player;
-var Field = require('Models/Field');
-global.Field = Field;
+/* extend original Array class for methods such as removeAt */
+require('Acx/Array');
+
+
+var Server = require('Server');
 
 var server = new Server;
 server.listen(8081);
 server.basePath = __dirname;
 
-
-
-
+var width = 840;
+var height = 408;
+var field = new Field(840, 408);
 
 function allocatePlayer(client)
 {
     return new Player(client.id, "dupa", new Vector(20, 20));
+}
+
+function createFullState(field)
+{
+    var players = field.players;
+    var fullState = [];
+    for(i = 0;i < players.length;++i) {
+        fullState.push( {id: players[i].id, name: players[i].name, position: players[i].position.toStruct(), velocity: players[i].velocity.toStruct()});
+    }
+    return fullState;
 }
 
 server.on('connection',
@@ -34,11 +45,15 @@ server.on('connection',
 
 			  console.log(client.id + " Connected");
 
-              client.player = allocatePlayer(client);
+              client.sendFullState(createFullState(field));
 
+              client.player = field.addPlayer(allocatePlayer(client));
+
+              client.broadcast(function(other) { other.sendNewPlayer(client.player);});
 
 			  client.on('disconnect',
 						function() {
+                            field.delPlayer(client.player);
 							console.log(client.id + " Disconnected");
 						}
 
