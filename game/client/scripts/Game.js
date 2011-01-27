@@ -32,12 +32,11 @@ $(function ()
 		var pingInterval;
 		var pingSpan = $('#ping');
 
-		network.on('connect', function ()
-		{
+		network.on('connect', function () {
 			logMsg("Connected to server");
 
 			pingInterval = setInterval(function ()
-			{
+			                           {
 				network.sendPing(function (diff)
 				{
 					pingSpan.text(diff);
@@ -51,6 +50,21 @@ $(function ()
 
 			clearInterval(pingInterval);
 		});
+
+        network.on('newPlayer', function(player, time) {
+            logMsg("New player connected with id " + player.id + " name " + player.name);
+        });
+
+        network.on('fullState', function(fullState) {
+            var msg = "Got full state, players: ";
+            console.log(fullState.state);
+            for(i = 0;i < fullState.state.length;++i) {
+                console.log(fullState.state[i]);
+                msg += fullState.state[i].id + ", ";
+            }
+            logMsg(msg);
+        });
+
 	}
 
 	function update(time)

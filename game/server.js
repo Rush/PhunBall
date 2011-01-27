@@ -1,30 +1,64 @@
-/*var http = require('http')
-, url = require('url')
-, fs = require('fs')
-, io = require('../node-bin')
-, sys = require(process.binding('natives').util ? 'util' : 'sys')
-, server;*/
-
+function globalInclude(className)
+{
+    var something = require(className);
+    global[className] = something;
+}
 require.paths.unshift("./client/scripts/");
-require.paths.unshift("./server/")
-var Vector = require('Vector');
+require.paths.unshift("./client/scripts/Models");
+require.paths.unshift("./server/");
+globalInclude('Vector');
+globalInclude('Ball');
+globalInclude('Player');
+globalInclude('Field');
+
+/* extend original Array class for methods such as removeAt */
+require('Acx/Array');
+
+
 var Server = require('Server');
 
 var server = new Server;
 server.listen(8081);
 server.basePath = __dirname;
 
-var dd = server.on('connection',
+var width = 840;
+var height = 408;
+var field = new Field(840, 408);
+
+function allocatePlayer(client)
+{
+    return new Player(client.id, "dupa", new Vector(20, 20));
+}
+
+function createFullState(field)
+{
+    var players = field.players;
+    var fullState = [];
+    for(i = 0;i < players.length;++i) {
+        fullState.push( {id: players[i].id, name: players[i].name, position: players[i].position.toStruct(), velocity: players[i].velocity.toStruct()});
+    }
+    return fullState;
+}
+
+server.on('connection',
 		  function(client) {
-			  
-			  console.log(client.sessionId + " Connected");
-			  client.on('disconnect', 
+
+			  console.log(client.id + " Connected");
+
+              client.sendFullState(createFullState(field));
+
+              client.player = field.addPlayer(allocatePlayer(client));
+
+              client.broadcast(function(other) { other.sendNewPlayer(client.player);});
+
+			  client.on('disconnect',
 						function() {
-							console.log(client.sessionId + " Disconnected");
+                            field.delPlayer(client.player);
+							console.log(client.id + " Disconnected");
 						}
 
 					   );
-		  }		  
+		  }
 		 );
 
 
@@ -91,7 +125,7 @@ function movePlayer(state, v)
 {
 	var pVec = (new Vector(state.x, state.y)).add(v);
 	pVec.x = Math.clamp(0, FIELD_WIDTH, pVec.x);
-	pVec.y = Math.clamp(0, FIELD_HEIGHT, pVec.y);	
+	pVec.y = Math.clamp(0, FIELD_HEIGHT, pVec.y);
 	state.x = pVec.x;
 	state.y = pVec.y;
 }
@@ -102,7 +136,7 @@ function worldUpdate()
 	var now = new Date();
 	var time = (now.valueOf() - lastTime.valueOf()) / 1000;
 	lastTime = now;
-	
+
 	for(i = 0;i < playerList.length;++i) {
 		var state = playersState[playerList[i]];
 
@@ -121,16 +155,16 @@ var playerSpeed = 200;
 
 
 
-setInterval(function() {   
+setInterval(function() {
 		var myPlayersState = [];
 		for (i = 0; i < playerList.length; ++i)
 		{
-			myPlayersState[i] = { id: playerList[i], state: 
+			myPlayersState[i] = { id: playerList[i], state:
 								  {x: playersState[playerList[i]].x|0,
 								   y: playersState[playerList[i]].y|0}
 
 			};
-		}		
+		}
 		io.broadcast({ playersStateUpdate: myPlayersState });
 	}, 50);
 */
@@ -183,10 +217,10 @@ setInterval(function() {
 				message.id = client.sessionId;
 //			client.broadcast(message);
 				var playerState = playersState[message.id];
-				playerState.cursorVector = 
+				playerState.cursorVector =
 					new Vector(message.stateUpdate.x, message.stateUpdate.y);
 //			console.log(message.stateUpdate);
-				
+
 			}
 		} catch(err) {
 			console.log("Exception: '" + err.description + "' on client message.");

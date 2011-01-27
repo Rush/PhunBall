@@ -26,6 +26,15 @@ function CanvasRenderer(canvas)
 	{
 		if (myImage.complete && playerImage.complete)
 			context.drawImage(me ? myImage : playerImage, position.x - 16, position.y - 16, 32, 32);
+        var name = "dupa";
+        var metrics = context.measureText(name);
+
+        context.textBaseline = "top";
+        context.font = "12px solid helvetica";
+        context.fillStyle = "black";
+        context.fillText(name, position.x - metrics.width/2 + 1, position.y + 16 + 1);
+        context.fillStyle = "white";
+        context.fillText(name, position.x - metrics.width/2, position.y + 16);
 	};
 
 	this.drawBall = function (position)

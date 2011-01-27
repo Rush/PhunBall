@@ -94,7 +94,12 @@ Vector.prototype = {
 	toString: function ()
 	{
 		return this.x + " : " + this.y;
-	}
+	},
+
+    toStruct: function()
+    {
+        return {x: this.x, y: this.y};
+    }
 };
 
 module.exports = Vector;

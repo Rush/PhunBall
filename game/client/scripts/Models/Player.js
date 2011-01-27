@@ -8,3 +8,5 @@ function Player(id, name, pos)
 	this.position = pos;
 	this.velocity = new Vector();
 }
+
+module.exports = Player;

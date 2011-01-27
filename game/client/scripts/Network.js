@@ -1,14 +1,12 @@
 function Network()
 {
 	var self = this;
-	
-	var socket;
-
 	var callbacks = [];
+    var socket;
 
 	self.serverDelta = 0;
 
-	function invokeCallback(name, args) {
+    function invokeCallback(name, args) {
 		if(callbacks[name]) {
 			for(i = 0;i < callbacks[name].length;++i) {
 				callbacks[name][i].apply(null, args);
@@ -16,11 +14,29 @@ function Network()
 		}
 	}
 
+    this.on = function(name, callback) {
+		if(! callbacks[name])
+			callbacks[name] = [];
+		callbacks[name].push(callback);
+	};
+
+	this.off = function(name, callback) {
+		if(! callbacks[name])
+			return false;
+		for(i = 0;i < callbacks[name].length;++i) {
+			if(callbacks[name][i] == callback) {
+				callbacks[name].removeAt(i);
+				return true;
+			}
+		}
+		return false;
+	};
+
 	function setNetworkCallbacks(socket) {
 		socket.on('connect', function() {
 			connected = true;
 			invokeCallback('connect', null);
-			
+
 		});
 		socket.on('disconnect', function() {
 			connected = false;
@@ -31,46 +47,36 @@ function Network()
 				var time = parseInt(message.ping.time);
 				socket.send({pong: {time: time, serverDelta: 0}});
 			}
-			if(message.pong) {
-				invokeCallback('pong', [parseInt(message.pong.pingId), message.pong.time]);
+			else if(message.pong) {
+				invokeCallback('pong', [parseInt(message.pong.pingId), parseInt(message.pong.time), parseInt(message.time)]);
 			}
+            else if(message.fullState) {
+                invokeCallback('fullState', [message.fullState, parseInt(message.time)]);
+            }
+
+            else if(message.newPlayer) {
+                invokeCallback('newPlayer', [message.newPlayer, parseInt(message.time)]);
+            }
+
 		});
-		
+
 	}
 
 	this.connect = function(host, port) {
 		socket = new io.Socket(host, {
 			port: port,
-			//transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling']},
+			transports: ['websocket', 'flashsockett', 'htmlfile', 'xhr-multipart', 'xhr-polling'],
 			rememberTransport: false
 			});
 		socket.connect();
 		setNetworkCallbacks(socket);
 
-	}
+	};
 
 	this.disconnect = function() {
 		socket = undefined;
 		callbacks = undefined;
-	}
-
-	this.on = function(name, callback) {
-		if(! callbacks[name])
-			callbacks[name] = [];
-		callbacks[name].push(callback);
-	}
-	
-	this.off = function(name, callback) {
-		if(! callbacks[name])
-			return false;
-		for(i = 0;i < callbacks[name].length;++i) {
-			if(callbacks[name][i] == callback) {
-				callbacks[name].removeAt(i)
-				return true;
-			}
-		}
-		return false;
-	}
+	};
 
 	self.connected = false;
 
@@ -81,23 +87,25 @@ function Network()
 	this.sendPing = function(callback) {
 
 		var pingId = parseInt(Math.random() * 65000);
-		var time = getCurrentTime();
-		socket.send({ping: {pingId: pingId, time: time}});
+        var time = getCurrentTime();
+		socket.send({ping: {pingId: pingId}, time: time});
 
 		var f;
 		self.on('pong', f = function(gotPingId, serverTime) {
 			if(gotPingId == pingId) {
-				callback(getCurrentTime() - time);
+                var delta = getCurrentTime() - time;
+				callback(delta);
+                socket.send({timeData: {delta: delta, time: getCurrentTime()}});
 				self.off('pong', f);
 			}
 		});
 
-	}
+	};
 	this.sendCursorChange = function(vector) {
-		socket.send({cursorVector: {x: vector.x, y: vector.y}});
-	}
+		socket.send({cursorVector: {x: vector.x, y: vector.y}, time: getCurrentTime()});
+	};
 	this.sendKickChange = function(isKicking) {
-		socket.send({kick: isKicking});
-	}
+		socket.send({kick: {isKicking: isKicking}, time: getCurrentTime()});
+	};
 
 }
