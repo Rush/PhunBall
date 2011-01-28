@@ -43,7 +43,7 @@ setInterval(function() {
     });
 
     simulation.update(time);
-}, 10);
+}, 100);
 
 
 setInterval(function() {

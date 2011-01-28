@@ -24,8 +24,6 @@ $(function ()
 
     var myId = 0;
 
-    var currentPing = 0;
-
 	function initialize()
 	{
 		function logMsg(text)
@@ -48,7 +46,6 @@ $(function ()
 				network.sendPing(function (diff)
 				{
 					pingSpan.text(diff);
-                    currentPing = (currentPing + diff)/2;
 				});
 			}, 1000);
             fullStateCounter = 0;
@@ -106,17 +103,22 @@ $(function ()
 	function update(time)
 	{
 		var move = input.getMovement();
+        field.player.cursor = move;
 		if (!lastMove.equals(move))
 		{
 			network.sendCursorChange({ x: move.x, y: move.y });
 			lastMove.x = move.x;
 			lastMove.y = move.y;
-		    setTimeout(function() {
+<<<<<<< HEAD
+//		    setTimeout(function() {
                 field.player.cursor.x = move.x;
                 field.player.cursor.y = move.y;
-            }, currentPing/2);
+//            }, currentPing/2);
         }
 
+=======
+		}
+>>>>>>> parent of 7cfbf57... -Test of intentional client input lag.
 
 		field.players.forEach(function(player) {
             if (player.cursor.x != 0 || player.cursor.y != 0)
