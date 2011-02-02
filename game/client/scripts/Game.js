@@ -109,16 +109,12 @@ $(function ()
 			network.sendCursorChange({ x: move.x, y: move.y });
 			lastMove.x = move.x;
 			lastMove.y = move.y;
-<<<<<<< HEAD
 //		    setTimeout(function() {
-                field.player.cursor.x = move.x;
-                field.player.cursor.y = move.y;
+//                field.player.cursor.x = move.x;
+//                field.player.cursor.y = move.y;
 //            }, currentPing/2);
         }
 
-=======
-		}
->>>>>>> parent of 7cfbf57... -Test of intentional client input lag.
 
 		field.players.forEach(function(player) {
             if (player.cursor.x != 0 || player.cursor.y != 0)
@@ -144,13 +140,17 @@ $(function ()
 	// main
 	initialize();
 
+	var acc = 0;
 	setInterval(function ()
 	{
 		var now = new Date();
 		var time = (now.valueOf() - lastTime.valueOf()) / 1000;
 		lastTime = now;
-
-		update(time);
+		acc+=time;
+		while(acc >= 0.001) {
+			update(0.001);
+			acc-=0.001;
+		}
 		draw();
 	}, 10);
 });

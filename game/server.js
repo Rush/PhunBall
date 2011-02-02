@@ -31,19 +31,24 @@ var simulation = new Simulation(field);
 
 
 var lastTime = new Date();
+var acc = 0;
 setInterval(function() {
     var now = new Date();
 	var time = (now.valueOf() - lastTime.valueOf()) / 1000;
 	lastTime = now;
 
-    field.players.forEach(function(player) {
-        if(player.cursor.x != 0 || player.cursor.y != 0) {
-            simulation.applyForce(player, player.cursor, time);
-        }
-    });
+	acc += time;
 
-    simulation.update(time);
-}, 100);
+	while(acc >= 0.001) {
+    	field.players.forEach(function(player) {
+        	if(player.cursor.x != 0 || player.cursor.y != 0) {
+            	simulation.applyForce(player, player.cursor, 0.001);
+        	}
+    	});
+    	simulation.update(0.001);
+		acc-= 0.001;
+	}
+}, 50);
 
 
 setInterval(function() {
