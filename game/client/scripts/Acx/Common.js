@@ -20,7 +20,6 @@ function escapeHTML(text)
 	});
 }
 
-// TODO: method for JSON object
 Date.parseJSON = function (jsonDate)
 {
 	/// <summary>Parses date string produced by .NET JSON serializer.</summary>
@@ -57,16 +56,6 @@ if (!Math.lerp)
 		return from * (1 - position) + to * position;
 	};
 }
-
-// TODO: JSON object (parse(), stringify(), parseDate())
-
-/*if (!JSON.parseDate)
-{
-JSON.parseDate = function ()
-{
-return Date.parseJSON.apply(this, arguments);
-};
-}*/
 
 if (!String.prototype.trim)
 {

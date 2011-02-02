@@ -28,6 +28,20 @@ Vector.prototype =
 		return new Vector(this.x, this.y);
 	},
 
+	set: function (x, y)
+	{
+		if (y === undefined)
+		{
+			this.x = x.x;
+			this.y = x.y;
+		}
+		else
+		{
+			this.x = x;
+			this.y = y;
+		}
+	},
+
 	add: function (x, y)
 	{
 		if (y === undefined)
@@ -98,6 +112,11 @@ Vector.prototype =
 	equals: function (other)
 	{
 		return this.x == other.x && this.y == other.y;
+	},
+
+	empty: function ()
+	{
+		return this.x == 0 && this.y == 0;
 	},
 
 	toString: function ()
